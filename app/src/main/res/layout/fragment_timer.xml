@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/timer_progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/timer_showButton"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="60dp"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:minHeight="50dp"
+        android:minWidth="200dp"
+        android:max="10"
+        android:progress="0"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/timer_countdownTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timer_progressbar"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/timer_showButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/show_timer_button_string"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/timer_showButton"
+        android:layout_marginTop="60dp"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:id="@+id/timer_stop_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stop_button_string"/>
+
+        <Button
+            android:id="@+id/timer_resume_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resume_button_string"/>
+
+        <Button
+            android:id="@+id/timer_reset_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reset_button_string"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
