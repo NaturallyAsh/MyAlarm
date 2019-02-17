@@ -1,6 +1,10 @@
 package com.ashleigh.myalarm.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.ashleigh.myalarm.AlarmEditorActivity;
 import com.ashleigh.myalarm.R;
 import com.ashleigh.myalarm.data.DbHelper;
 import com.ashleigh.myalarm.model.Alarm;
@@ -38,6 +43,7 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
     private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm a", Locale.getDefault());
     private static final SimpleDateFormat SHORT_WEEK_DAYS_FORMAT = new SimpleDateFormat("E", Locale.getDefault());
     private SwitchClickListener listener;
+    public static String ARG_ITEM = "alarm_item";
 
     public AlarmRecyclerAdapter(Context context, SwitchClickListener listener) {
         this.mContext = context;
@@ -106,7 +112,34 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ARG_ITEM, getItem(holder.getAdapterPosition()));
+                Intent intent = new Intent(mContext, AlarmEditorActivity.class);
+                intent.putExtras(bundle);
+                mContext.startActivity(intent);
+            }
+        });
+        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(mContext);
+                alertBuilder.setTitle("Delete alarm?");
+                alertBuilder.setCancelable(true);
+                alertBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteAlarmItem(holder.getAdapterPosition());
+                    }
+                });
+                alertBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                });
+                AlertDialog dialog = alertBuilder.create();
+                dialog.show();
+                return false;
             }
         });
 
@@ -138,5 +171,10 @@ public class AlarmRecyclerAdapter extends RecyclerView.Adapter<AlarmRecyclerAdap
 
     public Alarm getItem(int position) {
         return dbHelper.getAlarmAt(position);
+    }
+
+    private void deleteAlarmItem(int position) {
+        dbHelper.removeAlarm(getItem(position).getmId());
+        notifyItemRemoved(position);
     }
 }

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.ashleigh.myalarm.adapter.AlarmRecyclerAdapter;
 import com.ashleigh.myalarm.data.DbHelper;
 import com.ashleigh.myalarm.model.Alarm;
 
@@ -54,7 +55,7 @@ public class AlarmEditorActivity extends AppCompatActivity {
     private ArrayList<Integer> daysOfWeek = new ArrayList<>();
     private String list = null;
     private DbHelper dbHelper;
-
+    private Alarm itemModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,8 +79,15 @@ public class AlarmEditorActivity extends AppCompatActivity {
         saveBT.setOnClickListener(exitListener);
         cancelBT.setOnClickListener(exitListener);
 
-        Log.i(TAG, "timepicker hour: " + timePicker.getHour() +
-                " timepicker min: " + timePicker.getMinute());
+        itemModel = getIntent().getParcelableExtra(AlarmRecyclerAdapter.ARG_ITEM);
+        if (itemModel != null) {
+            timePicker.setHour(itemModel.getmHour());
+            timePicker.setMinute(itemModel.getmMin());
+            nameET.setText(itemModel.getmName());
+            if (itemModel.getDayList() != null) {
+                getArray(itemModel);
+            }
+        }
 
     }
 
@@ -95,22 +103,59 @@ public class AlarmEditorActivity extends AppCompatActivity {
         return list;
     }
 
-    private void getArray() {
+    private void getArray(Alarm model) {
 
-        JSONArray getList = null;
-        try {
-            JSONObject json = new JSONObject(list);
-            getList = json.optJSONArray("daysArray");
-            if (getList != null) {
-                for (int i = 0; i < getList.length(); i++) {
-                    Log.i(TAG, "array data: " + getList.getInt(i));
+        if (model.getDayList() != null) {
+            String itemList = model.getDayList();
+            JSONArray getList = null;
+            try {
+                JSONObject json = new JSONObject(itemList);
+                getList = json.optJSONArray("daysArray");
+                if (getList != null) {
+                    for (int i = 0; i < getList.length(); i++) {
+                        //Log.i(TAG, "array data: " + getList.getInt(i));
+                        setDaysOfWeek(getList.getInt(i));
+                    }
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
+            //Log.i(TAG, "get list: " + getList);
         }
-        //Log.i(TAG, "get list: " + getList);
 
+    }
+
+    private void setDaysOfWeek(int days) {
+        switch (days) {
+            case 0:
+                sunTV.setBackground(getDrawable(R.drawable.circle_color));
+                sunTV.setSelected(true);
+                break;
+            case 1:
+                monTV.setBackground(getDrawable(R.drawable.circle_color));
+                monTV.setSelected(true);
+                break;
+            case 2:
+                tueTV.setBackground(getDrawable(R.drawable.circle_color));
+                tueTV.setSelected(true);
+                break;
+            case 3:
+                wedTV.setBackground(getDrawable(R.drawable.circle_color));
+                wedTV.setSelected(true);
+                break;
+            case 4:
+                thursTv.setBackground(getDrawable(R.drawable.circle_color));
+                thursTv.setSelected(true);
+                break;
+            case 5:
+                friTV.setBackground(getDrawable(R.drawable.circle_color));
+                friTV.setSelected(true);
+                break;
+            case 6:
+                satTV.setBackground(getDrawable(R.drawable.circle_color));
+                satTV.setSelected(true);
+                break;
+        }
     }
 
     private void onSave() {
@@ -120,7 +165,14 @@ public class AlarmEditorActivity extends AppCompatActivity {
         String daysList = putArray(daysOfWeek);
 
 
-        Alarm alarm = new Alarm(name, hour, min, daysList);
+        Alarm alarm = new Alarm();
+        if (itemModel != null) {
+            alarm.setmId(itemModel.getmId());
+        }
+        alarm.setmName(name);
+        alarm.setmHour(hour);
+        alarm.setmMin(min);
+        alarm.setDayList(daysList);
 
         dbHelper.addAlarm(alarm);
 

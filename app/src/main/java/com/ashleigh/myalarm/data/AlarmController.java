@@ -36,10 +36,9 @@ public class AlarmController {
         notifyIntent.putExtra(ARG_ITEM, ParcelableUtil.marshall(model));
 
         long timeToNotify = setDayAlarm(model);
-        int notify = (int) timeToNotify;
 
         PendingIntent sendIntent = PendingIntent.getBroadcast(context, id,
-                notifyIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         am.setExact(AlarmManager.RTC_WAKEUP, timeToNotify, sendIntent);
         Calendar calendar = Calendar.getInstance();
@@ -54,9 +53,11 @@ public class AlarmController {
         Calendar calendar = Calendar.getInstance();
         int day = getNextDayAlarm(model);
         if (day <= calendar.get(Calendar.DAY_OF_WEEK)) {
-            calendar.add(Calendar.WEEK_OF_YEAR, 1);
+            //calendar.add(Calendar.WEEK_OF_YEAR, 1);
         }
         calendar.set(Calendar.DAY_OF_WEEK, day + 1);
+        calendar.set(Calendar.HOUR_OF_DAY, model.getmHour());
+        calendar.set(Calendar.MINUTE, model.getmMin());
         Log.i(TAG, "DOW: " + calendar.get(Calendar.DAY_OF_WEEK));
         return calendar.getTimeInMillis();
     }

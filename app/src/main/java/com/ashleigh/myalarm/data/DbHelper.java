@@ -17,7 +17,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static DbHelper instance = null;
     private Context mContext;
     private static final String DATABASE_NAME = "myalarmapp.db";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 12;
 
 
     public static synchronized DbHelper getInstance() {
